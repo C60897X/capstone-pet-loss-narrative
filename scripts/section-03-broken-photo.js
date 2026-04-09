@@ -46,7 +46,7 @@ export function initBrokenPhotoSection() {
         interactionSrc: "./assets/broken-photo/piece-3-interaction.svg",
         pieceClass: "broken-photo-piece-3",
         alt: "Broken photo piece 3",
-        openEvent: null
+        openEvent: "showP3AccompanySection"
       },
       {
         index: 4,

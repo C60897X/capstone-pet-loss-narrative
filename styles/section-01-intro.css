@@ -349,25 +349,48 @@
   display: block;
 }
 
-.intro-memory-progress {
+.intro-memory-progress-wrap {
   position: fixed;
   left: 50%;
   bottom: 3vh;
   width: 250px;
   height: 22px;
   transform: translateX(-50%);
+  z-index: 12;
+  pointer-events: none;
+}
+
+.intro-scroll-indicator.ui-indicator {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 220ms ease;
+  background: transparent;
+  color: #E15220;
+  font-family: "Source Sans 3", sans-serif;
+  font-size: 14px;
+  line-height: 1;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.intro-scroll-indicator.is-visible {
+  opacity: 1;
+}
+
+.intro-memory-progress {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   border: 2.5px solid #E15220;
   border-radius: 6px;
   background: rgba(252, 248, 245, 0.18);
   overflow: hidden;
-  z-index: 12;
-  opacity: 0;
-  transition: opacity 300ms ease;
   pointer-events: none;
-}
-
-.intro-memory-scenes.is-visible .intro-memory-progress {
-  opacity: 1;
 }
 
 .intro-memory-progress-fill {
@@ -475,10 +498,14 @@
     max-height: 14.336vh;
   }
 
-  .intro-memory-progress {
+  .intro-memory-progress-wrap {
     width: 140px;
     height: 28px;
     bottom: 5vh;
+  }
+
+  .intro-scroll-indicator.ui-indicator {
+    font-size: 13px;
   }
 
   .intro-memory-track {

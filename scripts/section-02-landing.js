@@ -14,7 +14,22 @@ export function initLandingSection() {
     const landingBackgroundImage = landingSection ? landingSection.querySelector(".landing-background img") : null;
     const landingPageImage = document.getElementById("landing-page-image");
   
-    if (!landingSection || !landingOpeningScene || !landingTransitionStage || !landingPageStage || !landingTextLine1a || !landingTextLine1b || !landingCatHitbox || !landingPageTitle || !landingPageSubtitle || !landingAboutButton || !landingHoverCursor || !landingExitOverlay || !landingBackgroundImage || !landingPageImage) {
+    if (
+      !landingSection ||
+      !landingOpeningScene ||
+      !landingTransitionStage ||
+      !landingPageStage ||
+      !landingTextLine1a ||
+      !landingTextLine1b ||
+      !landingCatHitbox ||
+      !landingPageTitle ||
+      !landingPageSubtitle ||
+      !landingAboutButton ||
+      !landingHoverCursor ||
+      !landingExitOverlay ||
+      !landingBackgroundImage ||
+      !landingPageImage
+    ) {
       return;
     }
   
@@ -38,12 +53,17 @@ export function initLandingSection() {
     let landingUiHasPlayed = false;
     let landingPageIsEnterReady = false;
     let isLeavingLandingPage = false;
+    let isAboutOverlayOpen = false;
   
     let transitionLayerA = null;
     let transitionLayerB = null;
     let transitionImageA = null;
     let transitionImageB = null;
     let activeTransitionLayer = 0;
+  
+    let aboutOverlay = null;
+    let aboutWindow = null;
+    let aboutCloseButton = null;
   
     function sleep(ms) {
       return new Promise(function (resolve) {
@@ -230,8 +250,105 @@ export function initLandingSection() {
       landingHoverCursor.classList.remove("is-visible");
     }
   
+    function isInsideElement(event, element) {
+      if (!element) return false;
+  
+      const rect = element.getBoundingClientRect();
+      return (
+        event.clientX >= rect.left &&
+        event.clientX <= rect.right &&
+        event.clientY >= rect.top &&
+        event.clientY <= rect.bottom
+      );
+    }
+  
+    function ensureAboutOverlay() {
+      if (aboutOverlay) {
+        return aboutOverlay;
+      }
+  
+      aboutOverlay = document.createElement("div");
+      aboutOverlay.className = "landing-about-overlay";
+  
+      const aboutBackdrop = document.createElement("div");
+      aboutBackdrop.className = "landing-about-overlay-backdrop";
+  
+      aboutWindow = document.createElement("div");
+      aboutWindow.className = "landing-about-window";
+  
+      const aboutWindowInner = document.createElement("div");
+      aboutWindowInner.className = "landing-about-window-inner";
+  
+      aboutCloseButton = document.createElement("button");
+      aboutCloseButton.className = "landing-about-close";
+      aboutCloseButton.setAttribute("aria-label", "Close about overlay");
+      aboutCloseButton.textContent = "×";
+  
+      const aboutContent = document.createElement("div");
+      aboutContent.className = "landing-about-content";
+  
+      const paragraphOne = document.createElement("p");
+      paragraphOne.className = "landing-about-paragraph";
+      paragraphOne.textContent = "This project explores grief, pet loss, and memory through visuals and interaction, creating a reflective space beyond traditional forms of communication.";
+  
+      const paragraphTwo = document.createElement("p");
+      paragraphTwo.className = "landing-about-paragraph";
+      paragraphTwo.textContent = "It was motivated by the difficulty of supporting loved ones through pet loss, especially when words feel insufficient. For many people, this grief is deeply felt but often lacks space for expression and understanding.";
+  
+      const paragraphThree = document.createElement("p");
+      paragraphThree.className = "landing-about-paragraph";
+      paragraphThree.textContent = "Built through research, visual asset creation, interaction design, and code, the project emphasizes pacing and intentional interaction. It hopes to help users reflect, feel understood, and carry memory forward with grief.";
+  
+      const emailParagraph = document.createElement("p");
+      emailParagraph.className = "landing-about-email";
+      emailParagraph.innerHTML = 'I hope you enjoy the narrative. Forward any questions to <a href="mailto:celinaxie60897@gmail.com">celinaxie60897@gmail.com</a>';
+  
+      aboutContent.appendChild(paragraphOne);
+      aboutContent.appendChild(paragraphTwo);
+      aboutContent.appendChild(paragraphThree);
+      aboutContent.appendChild(emailParagraph);
+  
+      aboutWindowInner.appendChild(aboutCloseButton);
+      aboutWindowInner.appendChild(aboutContent);
+      aboutWindow.appendChild(aboutWindowInner);
+      aboutOverlay.appendChild(aboutBackdrop);
+      aboutOverlay.appendChild(aboutWindow);
+      landingPageStage.appendChild(aboutOverlay);
+  
+      aboutBackdrop.addEventListener("click", function () {
+        closeAboutOverlay();
+      });
+  
+      aboutCloseButton.addEventListener("click", function (event) {
+        event.stopPropagation();
+        closeAboutOverlay();
+      });
+  
+      aboutWindow.addEventListener("click", function (event) {
+        event.stopPropagation();
+      });
+  
+      return aboutOverlay;
+    }
+  
+    function openAboutOverlay() {
+      ensureAboutOverlay();
+      isAboutOverlayOpen = true;
+      landingPageStage.classList.add("is-about-open");
+      aboutOverlay.classList.add("is-visible");
+      hideHoverCursor();
+    }
+  
+    function closeAboutOverlay() {
+      if (!aboutOverlay) return;
+  
+      isAboutOverlayOpen = false;
+      landingPageStage.classList.remove("is-about-open");
+      aboutOverlay.classList.remove("is-visible");
+    }
+  
     async function handleLandingPageEnter() {
-      if (!landingPageIsEnterReady || isLeavingLandingPage) return;
+      if (!landingPageIsEnterReady || isLeavingLandingPage || isAboutOverlayOpen) return;
   
       isLeavingLandingPage = true;
       landingPageStage.classList.remove("is-enter-ready");
@@ -274,8 +391,33 @@ export function initLandingSection() {
   
     landingCatHitbox.addEventListener("click", handleLandingCatClick);
   
+    landingAboutButton.addEventListener("click", function (event) {
+      event.stopPropagation();
+  
+      if (!landingAboutButton.classList.contains("is-visible")) {
+        return;
+      }
+  
+      if (isAboutOverlayOpen) {
+        closeAboutOverlay();
+      } else {
+        openAboutOverlay();
+      }
+    });
+  
     landingPageStage.addEventListener("mousemove", function (event) {
       if (!landingPageIsEnterReady || isLeavingLandingPage) return;
+  
+      if (isAboutOverlayOpen) {
+        hideHoverCursor();
+        return;
+      }
+  
+      if (isInsideElement(event, landingAboutButton)) {
+        hideHoverCursor();
+        return;
+      }
+  
       moveHoverCursor(event);
       showHoverCursor();
     });
@@ -284,7 +426,15 @@ export function initLandingSection() {
       hideHoverCursor();
     });
   
-    landingPageStage.addEventListener("click", function () {
+    landingPageStage.addEventListener("click", function (event) {
+      if (isAboutOverlayOpen) {
+        return;
+      }
+  
+      if (isInsideElement(event, landingAboutButton)) {
+        return;
+      }
+  
       handleLandingPageEnter();
     });
   

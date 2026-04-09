@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="./styles/section-02-landing.css">
     <link rel="stylesheet" href="./styles/section-03-broken-photo.css">
     <link rel="stylesheet" href="./styles/section-05-p2-combing.css">
+    <link rel="stylesheet" href="./styles/section-06-p3-accompany.css">
     <link rel="stylesheet" href="./styles/base.css">
 </head>
 <body>
@@ -57,8 +58,11 @@
                     <button id="intro-photo-button" class="intro-photo-button" aria-label="Take photo">
                         <img src="./assets/intro/intro-memory-scenes-6-photo-button.png" alt="Take photo">
                     </button>
-                    <div id="intro-memory-progress" class="intro-memory-progress" aria-hidden="true">
-                        <div id="intro-memory-progress-fill" class="intro-memory-progress-fill"></div>
+                    <div class="intro-memory-progress-wrap">
+                        <div id="intro-scroll-indicator" class="intro-scroll-indicator ui-indicator">Scroll</div>
+                        <div id="intro-memory-progress" class="intro-memory-progress" aria-hidden="true">
+                            <div id="intro-memory-progress-fill" class="intro-memory-progress-fill"></div>
+                        </div>
                     </div>
                     <div id="intro-memory-track" class="intro-memory-track">
                         <img class="intro-memory-image" src="./assets/intro/intro-memory-scenes-1.png" alt="Memory scene 1">
@@ -146,6 +150,15 @@
                 </div>
             </div>
         </section>
+        <!-- section 6 photo piece 3 subsection: accompany -->
+<section id="section-06-p3-accompany" class="story-section">
+    <div id="p3-accompany-frame" class="p3-accompany-frame">
+        <div id="p3-accompany-stage" class="p3-accompany-stage">
+            <img id="p3-accompany-image" class="p3-accompany-image" src="./assets/p3-accompany/3pm-scene.png" alt="3pm scene">
+            <div id="p3-time-hit" class="p3-time-hit"></div>
+        </div>
+    </div>
+</section>
     </main>
 
     <script type="module" src="./scripts/main.js"></script>

@@ -6,6 +6,7 @@ export function initIntroSection() {
   const memoryScenes = document.getElementById("intro-memory-scenes");
   const memoryTrack = document.getElementById("intro-memory-track");
   const memoryProgressFill = document.getElementById("intro-memory-progress-fill");
+  const scrollIndicator = document.getElementById("intro-scroll-indicator");
   const photoButton = document.getElementById("intro-photo-button");
   const introTextLine1a = document.getElementById("intro-text-line-1a");
   const introTextLine1b = document.getElementById("intro-text-line-1b");
@@ -46,6 +47,7 @@ export function initIntroSection() {
     !memoryScenes ||
     !memoryTrack ||
     !memoryProgressFill ||
+    !scrollIndicator ||
     !photoButton ||
     !introTextLine1a ||
     !introTextLine1b ||
@@ -74,6 +76,7 @@ export function initIntroSection() {
   let accumulatedWheelDelta = 0;
   let accumulatedTouchDelta = 0;
   let isPhotoSequencePlaying = false;
+  let hasStartedMemoryScroll = false;
 
   const WHEEL_STEP_THRESHOLD = 45;
   const TOUCH_STEP_THRESHOLD = 35;
@@ -279,6 +282,21 @@ export function initIntroSection() {
     memoryTextTyped.textContent = "";
   }
 
+  function showScrollIndicator() {
+    scrollIndicator.classList.add("is-visible");
+  }
+
+  function hideScrollIndicator() {
+    scrollIndicator.classList.remove("is-visible");
+  }
+
+  function revealProgressAfterFirstScroll() {
+    if (hasStartedMemoryScroll) return;
+
+    hasStartedMemoryScroll = true;
+    hideScrollIndicator();
+  }
+
   function getLocalPosition(event) {
     const frameRect = introFrame.getBoundingClientRect();
     return {
@@ -375,6 +393,10 @@ export function initIntroSection() {
     const clampedIndex = Math.max(0, Math.min(index, memoryImages.length - 1));
     if (clampedIndex === currentMemoryIndex) return;
     if (memoryStepLocked || isPhotoSequencePlaying) return;
+
+    if (currentMemoryIndex === 0 && clampedIndex > 0) {
+      revealProgressAfterFirstScroll();
+    }
 
     currentMemoryIndex = clampedIndex;
     targetTrackX = getImageCenterTrackX(currentMemoryIndex);
@@ -488,6 +510,9 @@ export function initIntroSection() {
     currentTrackX = targetTrackX;
     memoryTrack.style.transform = `translate3d(${currentTrackX}px, -50%, 0)`;
     updateProgressBar();
+
+    hasStartedMemoryScroll = false;
+    showScrollIndicator();
 
     accumulatedWheelDelta = 0;
     accumulatedTouchDelta = 0;
@@ -615,6 +640,7 @@ export function initIntroSection() {
       memoryScenes.style.pointerEvents = "none";
       hideCursor();
       hideTransitionOverlay();
+      hideScrollIndicator();
     }
 
     function resetToSectionOneStart() {
@@ -636,7 +662,9 @@ export function initIntroSection() {
       accumulatedTouchDelta = 0;
       memoryStepLocked = false;
       isPhotoSequencePlaying = false;
+      hasStartedMemoryScroll = false;
       updatePhotoButtonVisibility();
+      hideScrollIndicator();
       hideCursor();
       hideTransitionOverlay();
       runIntroWritingSequence();

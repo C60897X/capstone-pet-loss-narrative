@@ -1,0 +1,120 @@
+#section-06-p3-accompany {
+    position: fixed;
+    inset: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    visibility: hidden;
+    pointer-events: none;
+    z-index: 9;
+  }
+  
+  #section-06-p3-accompany.is-visible {
+    visibility: visible;
+    pointer-events: auto;
+  }
+  
+  #section-06-p3-accompany.is-complete {
+    visibility: hidden;
+    pointer-events: none;
+  }
+  
+  .p3-accompany-frame {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background: #ffffff;
+  }
+  
+  .p3-accompany-stage {
+    position: absolute;
+    inset: 0;
+    background: #ffffff;
+  }
+  
+  .p3-accompany-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+  
+  .p3-time-hit {
+    position: absolute;
+    top: 33%;
+    left: 79%;
+    width: 100px;
+    height: 50px;
+    transform: translate(-50%, -50%);
+    z-index: 3;
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+  }
+  
+  .p3-time-hit.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  
+  .p3-time-hit.is-hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+  
+  .p3-clock-indicator.ui-indicator {
+    position: absolute;
+    left: 50%;
+    bottom: 3%;
+    top: auto;
+    transform: translateX(-50%);
+    z-index: 7;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 220ms ease;
+    font-size: 22px;
+    line-height: 1;
+    padding: 12px 28px;
+    background: rgba(18, 27, 40, 0.6);
+    color: #ffffff;
+    border-radius: 5px;
+    font-family: "Source Sans 3", sans-serif;
+    white-space: nowrap;
+  }
+  
+  .p3-clock-indicator.is-visible {
+    opacity: 1;
+  }
+  
+  .p3-photo-piece {
+    position: absolute;
+    top: 58%;
+    left: 60%;
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: none;
+    max-height: none;
+    transform: translate(-50%, -50%) scale(0.92);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 4;
+    cursor: pointer;
+    transition: opacity 260ms ease, transform 220ms ease;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+  
+  .p3-photo-piece.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  
+  .p3-photo-piece:hover {
+    transform: translate(-50%, -50%) scale(0.97);
+  }

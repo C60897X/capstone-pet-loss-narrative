@@ -176,18 +176,16 @@ export function initP2CombingSection() {
     }
   
     function revealP2CombingSection() {
-      if (isVisible) return;
-  
-      isVisible = true;
-      interactionStarted = false;
-      interactionComplete = false;
-      isDragging = false;
-      dragDistance = 0;
-      p2CombingImage.src = BEFORE_COMB_SRC;
-      p2CombingSection.classList.remove("is-complete");
-      p2CombingSection.classList.add("is-visible");
-      showInteractionUi();
-    }
+        isVisible = true;
+        interactionStarted = false;
+        interactionComplete = false;
+        isDragging = false;
+        dragDistance = 0;
+        p2CombingImage.src = BEFORE_COMB_SRC;
+        p2CombingSection.classList.remove("is-complete");
+        p2CombingSection.classList.add("is-visible");
+        showInteractionUi();
+      }
   
     p2CombingImage.addEventListener("dragstart", preventImageDrag);
     p2DragZone.addEventListener("dragstart", preventImageDrag);

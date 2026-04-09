@@ -51,6 +51,7 @@ export function initHeartSection() {
     const PERSON_STANDING_SRC = "./assets/heart/person-standing.png";
   
     let backgroundItemsCreated = false;
+    let backgroundImagesReady = false;
     let backgroundOffsetX = 0;
     let backgroundMaxOffset = 0;
     let backgroundAnimationId = null;
@@ -124,6 +125,36 @@ export function initHeartSection() {
       }
   
       backgroundItemsCreated = true;
+    }
+  
+    async function waitForBackgroundImages() {
+      const images = heartBackgroundTrack.querySelectorAll(".heart-background-image");
+  
+      const waits = [];
+  
+      for (let i = 0; i < images.length; i += 1) {
+        const image = images[i];
+  
+        waits.push(
+          new Promise(function (resolve) {
+            if (image.complete && image.naturalWidth > 0) {
+              resolve();
+              return;
+            }
+  
+            image.onload = function () {
+              resolve();
+            };
+  
+            image.onerror = function () {
+              resolve();
+            };
+          })
+        );
+      }
+  
+      await Promise.all(waits);
+      backgroundImagesReady = true;
     }
   
     function updateBackgroundMaxOffset() {
@@ -281,10 +312,13 @@ export function initHeartSection() {
           }
   
           heartBackgroundTrack.style.transform = `translate3d(${-backgroundOffsetX}px, 0, 0)`;
-          checkTriggerEncounter();
         }
   
-        if (!hasReachedTriggerPoint) {
+        checkTriggerEncounter();
+  
+        if (!hasReachedTriggerPoint && backgroundOffsetX < backgroundMaxOffset) {
+          backgroundAnimationId = requestAnimationFrame(step);
+        } else if (!hasReachedTriggerPoint && backgroundMaxOffset > 0) {
           backgroundAnimationId = requestAnimationFrame(step);
         } else {
           stopBackgroundMovement();
@@ -358,12 +392,17 @@ export function initHeartSection() {
   
       ensureBackgroundImages();
   
+      if (!backgroundImagesReady) {
+        await waitForBackgroundImages();
+      }
+  
       await new Promise(function (resolve) {
         requestAnimationFrame(function () {
           requestAnimationFrame(resolve);
         });
       });
   
+      resetBackgroundPosition();
       runHeartSequence();
     }
   

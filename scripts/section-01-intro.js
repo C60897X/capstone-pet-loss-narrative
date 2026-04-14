@@ -700,6 +700,14 @@ export function initIntroSection() {
         jumpToSectionThree();
       });
     }
+
+    const debugJumpSection9 = document.getElementById("debug-jump-section-9");
+
+  if (debugJumpSection9) {
+    debugJumpSection9.addEventListener("click", function () {
+      document.dispatchEvent(new CustomEvent("showNextSectionFromFullPhoto"));
+    });
+  }
   }
   /* END TEMP DEBUG JUMP BLOCK */
 

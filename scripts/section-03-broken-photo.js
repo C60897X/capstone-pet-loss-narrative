@@ -316,6 +316,49 @@ export function initBrokenPhotoSection() {
         return pieceState.collected;
       });
     }
+
+    function resetBrokenPhotoToInitialState() {
+      pieceStates[1].collected = false;
+      pieceStates[2].collected = false;
+      pieceStates[3].collected = false;
+      pieceStates[4].collected = false;
+      pieceStates[5].collected = false;
+    
+      isVisible = false;
+      hasStartedSequence = false;
+      isLeaving = false;
+    
+      brokenPhotoSection.classList.remove("is-complete");
+      brokenPhotoSection.classList.remove("is-visible");
+    
+      brokenPhotoHeart.classList.remove("is-hidden");
+      brokenPhotoHeart.classList.remove("is-visible");
+    
+      if (brokenHeartImage) {
+        brokenHeartImage.classList.remove("is-visible");
+        brokenHeartImage.classList.remove("is-hidden");
+      }
+    
+      if (piecesGroup) {
+        piecesGroup.classList.remove("is-hidden");
+      }
+    
+      if (fullGroup) {
+        fullGroup.classList.remove("is-visible");
+    
+        if (typeof fullGroup.clearIdleCue === "function") {
+          fullGroup.clearIdleCue();
+        }
+      }
+    
+      for (let i = 0; i < pieceElements.length; i += 1) {
+        pieceElements[i].classList.remove("is-visible");
+        pieceElements[i].classList.remove("is-active");
+        pieceElements[i].classList.add("is-interactive");
+      }
+    
+      refreshPieceVisuals();
+    }
   
     async function showResolvedPhotoState() {
       ensureFullGroup();
@@ -483,7 +526,12 @@ export function initBrokenPhotoSection() {
     });
 
     document.addEventListener("showBrokenPhotoSection", function () {
+      resetBrokenPhotoToInitialState();
       revealBrokenPhotoSection();
+    });
+
+    document.addEventListener("replayLandingFromHome", function () {
+      resetBrokenPhotoToInitialState();
     });
   
     document.addEventListener("returnToBrokenPhotoHub", function () {

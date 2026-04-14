@@ -11,20 +11,44 @@ export function initIntroSection() {
   const introTextLine1a = document.getElementById("intro-text-line-1a");
   const introTextLine1b = document.getElementById("intro-text-line-1b");
   const introTextLine2 = document.getElementById("intro-text-line-2");
+  const memoryTextStage = document.getElementById("intro-memory-text-stage");
   const memoryTextElement = document.getElementById("intro-memory-text");
   const memoryTextGhost = document.getElementById("intro-memory-text-ghost");
   const memoryTextTyped = document.getElementById("intro-memory-text-typed");
+  const memoryTextLineElement = memoryTextStage
+    ? memoryTextStage.querySelector(".intro-memory-text-line")
+    : null;
   const memoryImages = memoryTrack ? Array.from(memoryTrack.querySelectorAll(".intro-memory-image")) : [];
   const firstMemoryImage = memoryImages[0] || null;
   const lastMemoryImage = memoryImages[memoryImages.length - 1] || null;
 
+  let memoryAgeElement = document.getElementById("intro-memory-age");
+
   const memoryTexts = [
-    "Age: 10. Today, Coco joined our family.",
-    "Age: 10. Buying different types of food to see which she likes.",
-    "Age: 12. Coco, cleverly waiting for her food.",
-    "Age: 15. She meets me everyday at the door when I return from school.",
-    "Age: 18. Toy-playing.",
-    "Age: 20. We took Coco for family photography!"
+    {
+      line1: "Today, Coco joined our family.",
+      line2: "Age: 10"
+    },
+    {
+      line1: "Buying different types of food to see which she likes.",
+      line2: "Age: 10"
+    },
+    {
+      line1: "Coco, cleverly waiting for her food.",
+      line2: "Age: 12"
+    },
+    {
+      line1: "She meets me everyday at the door when I return from school.",
+      line2: "Age: 15"
+    },
+    {
+      line1: "Toy-playing.",
+      line2: "Age: 18"
+    },
+    {
+      line1: "We took Coco for family photography!",
+      line2: "Age: 20"
+    }
   ];
 
   const TRANSITION_SEQUENCE_FRAMES = [
@@ -52,14 +76,23 @@ export function initIntroSection() {
     !introTextLine1a ||
     !introTextLine1b ||
     !introTextLine2 ||
+    !memoryTextStage ||
     !memoryTextElement ||
     !memoryTextGhost ||
     !memoryTextTyped ||
+    !memoryTextLineElement ||
     !firstMemoryImage ||
     !lastMemoryImage ||
     memoryImages.length === 0
   ) {
     return;
+  }
+
+  if (!memoryAgeElement) {
+    memoryAgeElement = document.createElement("div");
+    memoryAgeElement.id = "intro-memory-age";
+    memoryAgeElement.className = "intro-memory-age";
+    memoryTextLineElement.insertAdjacentElement("afterend", memoryAgeElement);
   }
 
   let currentFrame = 1;
@@ -235,6 +268,11 @@ export function initIntroSection() {
     memoryTextTyped.textContent = text;
   }
 
+  function setMemoryAgeValue(text) {
+    if (!memoryAgeElement) return;
+    memoryAgeElement.textContent = text;
+  }
+
   async function typeMemoryText(text, speed) {
     setMemoryTextValue(text);
     memoryTextTyped.textContent = "";
@@ -256,13 +294,16 @@ export function initIntroSection() {
     memoryTextTransitioning = true;
     pendingMemoryTextIndex = -1;
 
+    const nextText = memoryTexts[index];
+    setMemoryAgeValue(nextText.line2);
+
     if (currentMemoryTextIndex !== -1) {
       memoryTextElement.classList.add("is-fading");
       await sleep(180);
     }
 
     memoryTextElement.classList.remove("is-fading");
-    await typeMemoryText(memoryTexts[index], 22);
+    await typeMemoryText(nextText.line1, 22);
     currentMemoryTextIndex = index;
     memoryTextTransitioning = false;
 
@@ -280,6 +321,7 @@ export function initIntroSection() {
     memoryTextElement.classList.remove("is-fading");
     setMemoryTextValue("");
     memoryTextTyped.textContent = "";
+    setMemoryAgeValue("");
   }
 
   function showScrollIndicator() {
@@ -703,11 +745,11 @@ export function initIntroSection() {
 
     const debugJumpSection9 = document.getElementById("debug-jump-section-9");
 
-  if (debugJumpSection9) {
-    debugJumpSection9.addEventListener("click", function () {
-      document.dispatchEvent(new CustomEvent("showNextSectionFromFullPhoto"));
-    });
-  }
+    if (debugJumpSection9) {
+      debugJumpSection9.addEventListener("click", function () {
+        document.dispatchEvent(new CustomEvent("showNextSectionFromFullPhoto"));
+      });
+    }
   }
   /* END TEMP DEBUG JUMP BLOCK */
 

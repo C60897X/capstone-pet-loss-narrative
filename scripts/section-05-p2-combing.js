@@ -136,6 +136,7 @@ export function initP2CombingSection() {
       p2CombingImage.src = COMBING_CAT_SRC;
   
       const comb = ensureCombImage();
+      comb.classList.remove("is-hidden");
       comb.classList.add("is-visible");
       await sleep(120);
       comb.classList.add("is-animating");
@@ -174,8 +175,32 @@ export function initP2CombingSection() {
     function handlePointerUp() {
       isDragging = false;
     }
+
+    function resetP2CombingUI() {
+      if (dragIndicator) {
+        dragIndicator.classList.remove("is-visible");
+      }
+    
+      if (combImage) {
+        combImage.classList.remove("is-visible");
+        combImage.classList.remove("is-animating");
+        combImage.classList.add("is-hidden");
+      }
+    
+      if (darkenOverlay) {
+        darkenOverlay.classList.remove("is-visible");
+      }
+    
+      if (photoPieceImage) {
+        photoPieceImage.classList.remove("is-visible");
+      }
+    
+      p2DragZone.classList.remove("is-hidden");
+      p2DragZone.classList.remove("is-visible");
+    }
   
     function revealP2CombingSection() {
+        resetP2CombingUI();
         isVisible = true;
         interactionStarted = false;
         interactionComplete = false;
@@ -195,6 +220,10 @@ export function initP2CombingSection() {
   
     document.addEventListener("showP2CombingSection", function () {
       revealP2CombingSection();
+    });
+
+    document.addEventListener("replayLandingFromHome", function () {
+      resetP2CombingUI();
     });
   
     preloadAssets();

@@ -18,6 +18,8 @@ export function initIntroSection() {
   const memoryTextLineElement = memoryTextStage
     ? memoryTextStage.querySelector(".intro-memory-text-line")
     : null;
+  const beginProjectOverlay = document.getElementById("begin-project-overlay");
+  const smallScreenOverlay = document.getElementById("small-screen-overlay");
   const memoryImages = memoryTrack ? Array.from(memoryTrack.querySelectorAll(".intro-memory-image")) : [];
   const firstMemoryImage = memoryImages[0] || null;
   const lastMemoryImage = memoryImages[memoryImages.length - 1] || null;
@@ -62,6 +64,8 @@ export function initIntroSection() {
   ];
   const FRAME_SEQUENCE_MS = 125;
   const CROSSFADE_MS = 160;
+  const MIN_SCREEN_WIDTH = 1100;
+  const MIN_SCREEN_HEIGHT = 700;
 
   if (
     !introFrame ||
@@ -81,6 +85,8 @@ export function initIntroSection() {
     !memoryTextGhost ||
     !memoryTextTyped ||
     !memoryTextLineElement ||
+    !beginProjectOverlay ||
+    !smallScreenOverlay ||
     !firstMemoryImage ||
     !lastMemoryImage ||
     memoryImages.length === 0
@@ -110,6 +116,7 @@ export function initIntroSection() {
   let accumulatedTouchDelta = 0;
   let isPhotoSequencePlaying = false;
   let hasStartedMemoryScroll = false;
+  let hasUserBegunProject = false;
 
   const WHEEL_STEP_THRESHOLD = 45;
   const TOUCH_STEP_THRESHOLD = 35;
@@ -121,6 +128,53 @@ export function initIntroSection() {
   let transitionImageA = null;
   let transitionImageB = null;
   let activeTransitionLayer = 0;
+
+  function isScreenTooSmall() {
+    return window.innerWidth < MIN_SCREEN_WIDTH || window.innerHeight < MIN_SCREEN_HEIGHT;
+  }
+
+  function showSmallScreenOverlay() {
+    smallScreenOverlay.classList.add("is-visible");
+  }
+
+  function hideSmallScreenOverlay() {
+    smallScreenOverlay.classList.remove("is-visible");
+  }
+
+  function showBeginOverlay() {
+    if (hasUserBegunProject) return;
+    beginProjectOverlay.classList.add("is-visible");
+  }
+
+  function hideBeginOverlay() {
+    beginProjectOverlay.classList.remove("is-visible");
+  }
+
+  function updatePreIntroOverlays() {
+    if (isScreenTooSmall()) {
+      showSmallScreenOverlay();
+      hideBeginOverlay();
+      hideCursor();
+      return;
+    }
+
+    hideSmallScreenOverlay();
+
+    if (!hasUserBegunProject) {
+      showBeginOverlay();
+    } else {
+      hideBeginOverlay();
+    }
+  }
+
+  function beginProject() {
+    if (hasUserBegunProject) return;
+    if (isScreenTooSmall()) return;
+
+    hasUserBegunProject = true;
+    hideBeginOverlay();
+    runIntroWritingSequence();
+  }
 
   function ensureTransitionOverlay() {
     if (transitionOverlay) return;
@@ -575,9 +629,18 @@ export function initIntroSection() {
     });
   }
 
+  beginProjectOverlay.addEventListener("click", function () {
+    beginProject();
+  });
+
   photoButton.addEventListener("click", handlePhotoButtonClick);
 
   introFrame.addEventListener("mousemove", function (event) {
+    if (!hasUserBegunProject || isScreenTooSmall()) {
+      hideCursor();
+      return;
+    }
+
     if (currentFrame === 1) {
       if (isInside(event, catHitbox)) {
         moveCursor(event);
@@ -604,6 +667,10 @@ export function initIntroSection() {
   });
 
   introFrame.addEventListener("click", function (event) {
+    if (!hasUserBegunProject || isScreenTooSmall()) {
+      return;
+    }
+
     if (currentFrame === 1 && isInside(event, catHitbox)) {
       switchToFrameTwo();
       return;
@@ -617,6 +684,7 @@ export function initIntroSection() {
   introFrame.addEventListener(
     "wheel",
     function (event) {
+      if (!hasUserBegunProject || isScreenTooSmall()) return;
       if (currentFrame !== 3) return;
 
       event.preventDefault();
@@ -628,6 +696,7 @@ export function initIntroSection() {
   introFrame.addEventListener(
     "touchstart",
     function (event) {
+      if (!hasUserBegunProject || isScreenTooSmall()) return;
       if (currentFrame !== 3) return;
       if (event.touches.length !== 1) return;
 
@@ -640,6 +709,7 @@ export function initIntroSection() {
   introFrame.addEventListener(
     "touchmove",
     function (event) {
+      if (!hasUserBegunProject || isScreenTooSmall()) return;
       if (currentFrame !== 3) return;
       if (event.touches.length !== 1 || touchStartY === null) return;
 
@@ -659,6 +729,8 @@ export function initIntroSection() {
   });
 
   window.addEventListener("resize", function () {
+    updatePreIntroOverlays();
+
     if (currentFrame === 3) {
       targetTrackX = getImageCenterTrackX(currentMemoryIndex);
       currentTrackX = targetTrackX;
@@ -705,11 +777,12 @@ export function initIntroSection() {
       memoryStepLocked = false;
       isPhotoSequencePlaying = false;
       hasStartedMemoryScroll = false;
+      hasUserBegunProject = false;
       updatePhotoButtonVisibility();
       hideScrollIndicator();
       hideCursor();
       hideTransitionOverlay();
-      runIntroWritingSequence();
+      updatePreIntroOverlays();
     }
 
     function jumpToSectionTwo() {
@@ -753,5 +826,5 @@ export function initIntroSection() {
   }
   /* END TEMP DEBUG JUMP BLOCK */
 
-  runIntroWritingSequence();
+  updatePreIntroOverlays();
 }

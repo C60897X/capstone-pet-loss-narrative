@@ -443,6 +443,10 @@ export function initLandingSection() {
     paragraphThree.className = "landing-about-paragraph";
     paragraphThree.textContent = "Built through research, visual asset creation, interaction design, and code, the project emphasizes pacing and intentional interaction. It hopes to help users reflect, feel understood, and carry memory forward with grief.";
 
+    const credits = document.createElement("p");
+    credits.className = "landing-about-paragraph";
+    credits.textContent = 'Music credits: Gymnopédie No.1 — Erik Satie / Kevin MacLeod | CC BY 3.0 | freemusicarchive.org/music/Kevin_MacLeod/Classical_Sampler/Gymnopedie_No_1/';
+
     const emailParagraph = document.createElement("p");
     emailParagraph.className = "landing-about-email";
     emailParagraph.innerHTML = 'I hope you enjoy the narrative. Forward any questions to <a href="mailto:celinaxie60897@gmail.com">celinaxie60897@gmail.com</a>';
@@ -450,6 +454,7 @@ export function initLandingSection() {
     aboutContent.appendChild(paragraphOne);
     aboutContent.appendChild(paragraphTwo);
     aboutContent.appendChild(paragraphThree);
+    aboutContent.appendChild(credits);
     aboutContent.appendChild(emailParagraph);
 
     aboutWindowInner.appendChild(aboutCloseButton);

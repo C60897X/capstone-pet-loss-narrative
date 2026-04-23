@@ -880,6 +880,16 @@ export function initIntroSection() {
         document.dispatchEvent(new CustomEvent("showNextSectionFromFullPhoto"));
       });
     }
+
+    const debugJumpSection10 = document.getElementById("debug-jump-section-10");
+
+    if (debugJumpSection10) {
+      debugJumpSection10.addEventListener("click", function (event) {
+        event.stopPropagation();
+        hideIntroUi();
+        document.dispatchEvent(new CustomEvent("showEndingSection"));
+      });
+    }
   }
   /* END TEMP DEBUG JUMP BLOCK */
 

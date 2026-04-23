@@ -7,10 +7,13 @@
     <link rel="stylesheet" href="./styles/section-01-intro.css">
     <link rel="stylesheet" href="./styles/section-02-landing.css">
     <link rel="stylesheet" href="./styles/section-03-broken-photo.css">
+    <link rel="stylesheet" href="./styles/section-04-p1-wake.css">
     <link rel="stylesheet" href="./styles/section-05-p2-combing.css">
     <link rel="stylesheet" href="./styles/section-06-p3-accompany.css">
     <link rel="stylesheet" href="./styles/section-07-nail-cutting.css">
+    <link rel="stylesheet" href="./styles/section-08-p5-reassure.css">
     <link rel="stylesheet" href="./styles/section-09-heart.css">
+    <link rel="stylesheet" href="./styles/section-10-ending.css">
     <link rel="stylesheet" href="./styles/base.css">
 </head>
 <body>
@@ -87,12 +90,13 @@
                     </div>
                 </div>
                 <!-- temporary debug button -->
-                <div class="debug-jump-panel">
+                <!-- <div class="debug-jump-panel">
                     <button id="debug-jump-section-1" class="debug-jump-button" aria-label="Jump to section 1">Jump to S1</button>
                     <button id="debug-jump-section-2" class="debug-jump-button" aria-label="Jump to section 2">Jump to S2</button>
                     <button id="debug-jump-section-3" class="debug-jump-button" aria-label="Jump to section 3">Jump to S3</button>
                     <button id="debug-jump-section-9" class="debug-jump-button" aria-label="Jump to section 9">Jump to S9</button>
-                </div>
+                    <button id="debug-jump-section-10" class="debug-jump-button" aria-label="Jump to section 10">Jump to S10</button>
+                </div> -->
             </div>
         </section>
         <!-- section 2 landing page -->
@@ -155,6 +159,15 @@
                 </div>
             </div>
         </section>
+        <!-- section 4 -->
+        <section id="section-04-p1-wake" class="story-section">
+            <div id="p1-wake-frame" class="p1-wake-frame">
+                <div id="p1-wake-stage" class="p1-wake-stage">
+                    <img id="p1-wake-image" class="p1-wake-image" src="./assets/p1-wake/scene-1.png" alt="Wake scene">
+                    <div id="p1-click-hit" class="p1-click-hit"></div>
+                </div>
+            </div>
+        </section>
         <!-- section 5 photo piece 2 subsection: combing -->
         <section id="section-05-p2-combing" class="story-section">
             <div id="p2-combing-frame" class="p2-combing-frame">
@@ -173,11 +186,21 @@
                 </div>
             </div>
         </section>
+        <!-- section 7 -->
         <section id="section-07-nail-cutting" class="story-section">
             <div id="p4-nail-cutting-frame" class="p4-nail-cutting-frame">
                 <div id="p4-nail-cutting-stage" class="p4-nail-cutting-stage">
                     <img id="p4-nail-cutting-image" class="p4-nail-cutting-image" src="./assets/p4-nails/nail-cutting-before.png" alt="Nail cutting scene">
                     <div id="p4-drag-hit" class="p4-drag-hit"></div>
+                </div>
+            </div>
+        </section>
+        <!-- section 8 -->
+        <section id="section-08-p5-reassure" class="story-section">
+            <div id="p5-reassure-frame" class="p5-reassure-frame">
+                <div id="p5-reassure-stage" class="p5-reassure-stage">
+                    <img id="p5-reassure-image" class="p5-reassure-image" src="./assets/p5-reassure/scene-1.png" alt="Reassure scene">
+                    <div id="p5-approach-hit" class="p5-approach-hit"></div>
                 </div>
             </div>
         </section>
@@ -206,10 +229,25 @@
                 </div>
             </div>
         </section>
+        <!-- section 10 -->
+        <section id="section-10-ending" class="story-section">
+            <div id="ending-frame" class="ending-frame">
+                <div id="ending-stage" class="ending-stage">
+                    <div id="ending-scene-base" class="ending-scene-base"></div>
+                    <img id="ending-background-image" class="ending-background-image" src="./assets/ending/box-sideview.png" alt="Ending scene">
+                    <img id="ending-person" class="ending-person" src="./assets/heart/person-walking-1.png" alt="Person">
+                    <div id="ending-detect-zone" class="ending-detect-zone"></div>
+                    <div id="ending-detect-zone-second" class="ending-detect-zone-second"></div>
+                    <div id="ending-transition-veil" class="ending-transition-veil"></div>
+                </div>
+            </div>
+        </section>
         <button id="home-button" class="home-button">
             <img src="assets/shared/objects/button-home.png" alt="home button">
         </button>
     </main>
-
+    <audio id="background-music" loop preload="auto">
+        <source src="./assets/audio/background-music.mp3" type="audio/mpeg">
+    </audio>
     <script type="module" src="./scripts/main.js"></script>
 </body>

@@ -11,7 +11,9 @@ export function initGlobalNavigation() {
       "section-03-broken-photo",
       "section-05-p2-combing",
       "section-06-p3-accompany",
-      "section-09-heart"
+      "section-07-nail-cutting",
+      "section-09-heart",
+      "section-10-ending"
     ];
   
     function hideSection(section) {

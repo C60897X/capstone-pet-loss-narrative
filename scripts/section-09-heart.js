@@ -152,10 +152,75 @@ export function initHeartSection() {
   let hoverCursor = null;
   let hoverCursorImage = null;
 
+  let endingFallbackTimer = null;
+  let endingClickEnabled = false;
+  let endingTransitionStarted = false;
+
   function sleep(ms) {
     return new Promise(function (resolve) {
       window.setTimeout(resolve, ms);
     });
+  }
+
+  function clearEndingFallbackTimer() {
+    if (endingFallbackTimer !== null) {
+      window.clearTimeout(endingFallbackTimer);
+      endingFallbackTimer = null;
+    }
+  }
+
+  function enableEndingClickFallback() {
+    if (endingTransitionStarted) {
+      return;
+    }
+
+    endingClickEnabled = true;
+  }
+
+  function scheduleEndingClickFallback(runId) {
+    clearEndingFallbackTimer();
+    endingClickEnabled = false;
+
+    endingFallbackTimer = window.setTimeout(function () {
+      if (runId !== sectionRunId) {
+        return;
+      }
+
+      if (!heartSection.classList.contains("is-visible")) {
+        return;
+      }
+
+      if (endingTransitionStarted) {
+        return;
+      }
+
+      enableEndingClickFallback();
+    }, 10000);
+  }
+
+  async function transitionToEnding() {
+    if (endingTransitionStarted) {
+      return;
+    }
+
+    endingTransitionStarted = true;
+    endingClickEnabled = false;
+    clearEndingFallbackTimer();
+    hideCursor();
+    hideToolbar();
+    hideAdvanceIndicator();
+    stopBackgroundMovement();
+    stopWalkingAnimation();
+
+    document.dispatchEvent(new CustomEvent("showEndingSection"));
+
+    await new Promise(function (resolve) {
+      requestAnimationFrame(function () {
+        requestAnimationFrame(resolve);
+      });
+    });
+
+    heartSection.classList.add("is-complete");
   }
 
   function preloadAssets() {
@@ -175,7 +240,8 @@ export function initHeartSection() {
         BACKGROUND_2_STAGE_2,
         BACKGROUND_2_STAGE_3,
         BACKGROUND_2_STAGE_4,
-        "./assets/shared/objects/mouse-icon-paw-dark-drag.png"
+        "./assets/shared/objects/mouse-icon-paw-dark-drag.png",
+        "./assets/shared/objects/mouse-icon-paw-dark-32.png"
       ])
       .concat(BACKGROUND_2_P1_SEQUENCE)
       .concat(BACKGROUND_2_P2_SEQUENCE)
@@ -217,6 +283,16 @@ export function initHeartSection() {
     ensureHoverCursor().style.transform = `translate3d(${x - 16}px, ${y - 16}px, 0)`;
   }
 
+  function setDragCursorIcon() {
+    ensureHoverCursor();
+    hoverCursorImage.src = "./assets/shared/objects/mouse-icon-paw-dark-drag.png";
+  }
+
+  function setClickCursorIcon() {
+    ensureHoverCursor();
+    hoverCursorImage.src = "./assets/shared/objects/mouse-icon-paw-dark-32.png";
+  }
+
   function showCursor() {
     ensureHoverCursor().classList.add("is-visible");
     heartSection.classList.add("is-interactive");
@@ -249,9 +325,9 @@ export function initHeartSection() {
     heartPiece1.classList.remove("is-active-piece");
     heartPiece2.classList.remove("is-active-piece");
     heartPiece3.classList.remove("is-active-piece");
-  
+
     const activePiece = getActivePieceElement();
-  
+
     if (activePiece) {
       activePiece.classList.add("is-active-piece");
     }
@@ -273,6 +349,7 @@ export function initHeartSection() {
         return;
       }
 
+      setDragCursorIcon();
       moveCursor(event);
       showCursor();
     });
@@ -289,6 +366,7 @@ export function initHeartSection() {
         return;
       }
 
+      setDragCursorIcon();
       moveCursor(event);
     });
   }
@@ -809,6 +887,7 @@ export function initHeartSection() {
           stopBackgroundMovement();
           stopWalkingAnimation();
           heartWalkingPerson.classList.remove("is-visible");
+          transitionToEnding();
           return;
         }
 
@@ -884,10 +963,11 @@ export function initHeartSection() {
     currentWalkStage = 4;
     hasReachedTriggerPoint = false;
     hideAdvanceIndicator();
-    showWalkingPersonFrame(WALKING_SOURCES[0]);
     updateActivePieceState();
+    showWalkingPersonFrame(WALKING_SOURCES[0]);
     startWalkingAnimation();
     startBackgroundMovement(sectionRunId);
+    scheduleEndingClickFallback(sectionRunId);
   }
 
   async function handlePieceOneSuccess() {
@@ -1130,6 +1210,10 @@ export function initHeartSection() {
     sectionRunId += 1;
     const runId = sectionRunId;
 
+    clearEndingFallbackTimer();
+    endingClickEnabled = false;
+    endingTransitionStarted = false;
+
     currentWalkStage = 1;
     hasReachedTriggerPoint = false;
     pieceOnePlaced = false;
@@ -1207,6 +1291,30 @@ export function initHeartSection() {
     }
 
     checkTriggerEncounter();
+  });
+
+  heartSection.addEventListener("mousemove", function (event) {
+    if (!endingClickEnabled || endingTransitionStarted) {
+      return;
+    }
+
+    setClickCursorIcon();
+    moveCursor(event);
+    showCursor();
+  });
+
+  heartSection.addEventListener("mouseleave", function () {
+    if (endingClickEnabled && !endingTransitionStarted) {
+      hideCursor();
+    }
+  });
+
+  heartSection.addEventListener("click", function () {
+    if (!endingClickEnabled || endingTransitionStarted) {
+      return;
+    }
+
+    transitionToEnding();
   });
 
   heartPersonSequence.addEventListener("dragstart", preventImageDrag);
